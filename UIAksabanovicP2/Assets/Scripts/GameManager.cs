@@ -11,13 +11,18 @@ public class GameManager : MonoBehaviour
     private float createRate = 1.0F;
 
     private int score;
+    private int lives;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI gameOverText;
+    public TextMeshProUGUI livesText;
     public Button restartButton;
 
     public GameObject titleScreen;
 
     public bool isGameActive = true;
+
+    public GameObject pauseScreen;
+    private bool paused;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,8 +35,25 @@ public class GameManager : MonoBehaviour
         StartCoroutine(CreateTarget());
         score = 0;
         UpdateScore(0);
+        UpdateLives(3);
         isGameActive = true;
         titleScreen.gameObject.SetActive(false);
+    }
+
+    void ChangePaused()
+    {
+        if (!paused)
+        {
+            paused = true;
+            pauseScreen.SetActive(true);
+            Time.timeScale = 0;
+        }
+        else
+        {
+            paused = false;
+            pauseScreen.SetActive(false);
+            Time.timeScale = 1;
+        }
     }
 
     public void RestartGame()
@@ -60,7 +82,11 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        //Check if the user has pressed the P key
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            ChangePaused();
+        }
     }
 
     public void UpdateScore(int scoreToAdd)
@@ -69,4 +95,13 @@ public class GameManager : MonoBehaviour
         scoreText.text = "Score: " + score;
     }
 
+    public void UpdateLives(int livesToChange)
+    {
+        lives += livesToChange;
+        livesText.text = "Lives: " + lives;
+        if (lives <= 0)
+        {
+            GameOver();
+        }
+    }
 }
